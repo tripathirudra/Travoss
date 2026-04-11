@@ -1,0 +1,47 @@
+{
+  "name": "travoss-frontend",
+  "version": "1.0.0",
+  "description": "Travoss Frontend React App",
+  "private": true,
+  "proxy": "http://localhost:5000",
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "cross-env CI=false react-scripts build",
+    "start": "react-scripts start",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.6.2",
+    "lucide-react": "^0.454.0",
+    "mapbox-gl": "^3.17.0",
+    "postcss": "^8.4.31",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-map-gl": "^8.1.0",
+    "react-router-dom": "^6.20.0",
+    "react-scripts": "5.0.1",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
