@@ -66,4 +66,4 @@ const bookingSchema = new mongoose.Schema({
   completedAt: Date,
 })
 
-module.exports = mongoose.model("Booking", bookingSchema)
+module.exports = mongoose.models.Booking || mongoose.model("Booking", bookingSchema)

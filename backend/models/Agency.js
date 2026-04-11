@@ -67,4 +67,4 @@ agencySchema.methods.matchPassword = async function (enteredPassword) {
   return await bcryptjs.compare(enteredPassword, this.password)
 }
 
-module.exports = mongoose.model("Agency", agencySchema)
+module.exports = mongoose.models.Agency || mongoose.model("Agency", agencySchema)
