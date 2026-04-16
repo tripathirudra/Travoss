@@ -36,6 +36,14 @@ export default function Home() {
           />
         </div>
 
+        {/* Animated Running Car Background */}
+        <div className="absolute inset-x-0 bottom-20 z-0 pointer-events-none opacity-40 dark:opacity-20 overflow-hidden">
+          <div className="animate-drive-car text-6xl drop-shadow-xl inline-block">
+            🚗
+            <div className="w-16 h-1 bg-black/20 mt-1 blur-sm rounded-full absolute bottom-1 right-1"></div>
+          </div>
+        </div>
+
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 max-w-5xl">
           {/* Main Heading with Smooth Fade Animation */}

@@ -34,6 +34,9 @@ app.use("/api/vehicles", require("./routes/vehicles"))
 app.use("/api/drivers", require("./routes/drivers"))
 app.use("/api/notifications", require("./routes/notifications"))
 app.use("/api/upload", require("./routes/upload"))
+app.use("/api/support", require("./routes/support"))
+app.use("/api/shared-rides", require("./routes/sharedRides"))
+app.use("/api/payments", require("./routes/paymentRoutes"))
 
 // Health Check
 app.get("/api/health", (req, res) => {
@@ -52,10 +55,6 @@ app.use((req, res) => {
 })
 
 const PORT = process.env.PORT || 5000
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`)
-  })
-}
-
-module.exports = app
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`)
+})

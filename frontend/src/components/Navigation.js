@@ -23,10 +23,14 @@ export default function Navigation() {
   const { theme, toggleTheme } = useTheme()
 
   const links = [
-    { href: "/", label: "Home" },
+    { href: "/offer-ride", label: "Offer a Ride" },
+    { href: "/find-ride", label: "Find a Ride" },
+    { href: "/user/book-ride", label: "Book a Taxi" },
+    { href: "/my-rides", label: "My Rides" },
     { href: "/about", label: "About" },
     { href: "/services", label: "Services" },
     { href: "/contact", label: "Contact Us" },
+    { href: "/support-dashboard", label: "Agent Dash" },
   ]
 
   const isActive = (href) => location.pathname === href

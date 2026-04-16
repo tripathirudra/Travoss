@@ -14,7 +14,12 @@ import BookRide from "./pages/BookRide"
 import AgenciesNearYou from "./pages/AgenciesNearYou"
 import ContactSupport from "./pages/ContactSupport"
 import AgencyDashboard from "./pages/AgencyDashboard"
+import SupportDashboard from "./pages/SupportDashboard"
+import FindRide from "./pages/FindRide"
+import OfferRide from "./pages/OfferRide"
+import MyRides from "./pages/MyRides"
 import { ThemeProvider } from "./context/ThemeContext"
+import Chatbot from "./components/Chatbot"
 import "./App.css"
 
 function App() {
@@ -97,11 +102,34 @@ function App() {
                   </PrivateRoute>
                 }
               />
+
+              {/* Customer Support Dashboard */}
+              <Route path="/support-dashboard" element={<SupportDashboard />} />
+
+              {/* Ride Sharing Routes */}
+              <Route path="/find-ride" element={<FindRide />} />
+              <Route
+                path="/offer-ride"
+                element={
+                  <PrivateRoute>
+                    <OfferRide />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/my-rides"
+                element={
+                  <PrivateRoute>
+                    <MyRides />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
           </main>
           
           {/* Show footer only for public and user pages, not for agency dashboard */}
           {!window.location.pathname.startsWith("/agency") && <Footer />}
+          <Chatbot />
         </div>
       </Router>
     </ThemeProvider>

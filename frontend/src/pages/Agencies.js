@@ -1,11 +1,6 @@
-import { useState, useEffect, useRef } from "react"
-import { MapPin, Star, Search, Phone, Mail, Navigation, Filter } from "lucide-react"
+import { useState, useEffect } from "react"
+import { MapPin, Star, Search, Phone, Mail, Navigation, Filter, LayoutGrid } from "lucide-react"
 import { agencyService } from "../services/api"
-import ReactMapGL, { Marker, NavigationControl, GeolocateControl, Popup } from "react-map-gl/mapbox"
-import "mapbox-gl/dist/mapbox-gl.css"
-
-// Replace with your actual Mapbox token from https://account.mapbox.com/
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_API_KEY || ""
 
 export default function Agencies() {
   const [agencies, setAgencies] = useState([])
@@ -13,18 +8,8 @@ export default function Agencies() {
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const [viewMode, setViewMode] = useState("grid") // "grid" or "map"
-  const [selectedAgency, setSelectedAgency] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
   const [sortBy, setSortBy] = useState("name") // "name", "rating", "distance"
-  
-  const [viewport, setViewport] = useState({
-    latitude: 20.5937,
-    longitude: 78.9629,
-    zoom: 4,
-  })
-
-  const mapRef = useRef()
 
   useEffect(() => {
     fetchAgencies()
@@ -40,11 +25,6 @@ export default function Agencies() {
             longitude: position.coords.longitude,
           }
           setUserLocation(location)
-          setViewport({
-            latitude: location.latitude,
-            longitude: location.longitude,
-            zoom: 10,
-          })
         },
         (err) => {
           console.error("Error getting location:", err)
@@ -147,74 +127,31 @@ export default function Agencies() {
   }
 
   const handleLocationSearch = async () => {
-    // Switch to map view first
-    setViewMode("map")
+    setError("Finding nearest agencies based on your current city...")
     
-    if (!userLocation) {
-      // Get user location and wait for it
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const location = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            }
-            setUserLocation(location)
-            
-            // Zoom to user location
-            setViewport({
-              latitude: location.latitude,
-              longitude: location.longitude,
-              zoom: 12,
-            })
-            
-            // Try to fetch nearby agencies
-            try {
-              const response = await agencyService.getNearby(location.latitude, location.longitude)
-              setFilteredAgencies(response.data)
-            } catch (err) {
-              // If API fails, just filter by distance from all agencies
-              const sorted = sortAgencies(agencies, "distance")
-              setFilteredAgencies(sorted.slice(0, 10)) // Show top 10 nearest
-              setSortBy("distance")
-            }
-          },
-          (err) => {
-            setError("Unable to access your location. Please enable location services.")
-            setTimeout(() => setError(""), 5000)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
           }
-        )
-      }
-      return
-    }
-
-    // User location already available
-    setViewport({
-      latitude: userLocation.latitude,
-      longitude: userLocation.longitude,
-      zoom: 12,
-    })
-
-    try {
-      const response = await agencyService.getNearby(userLocation.latitude, userLocation.longitude)
-      setFilteredAgencies(response.data)
-    } catch (err) {
-      // If API fails, just filter by distance from all agencies
-      const sorted = sortAgencies(agencies, "distance")
-      setFilteredAgencies(sorted.slice(0, 10)) // Show top 10 nearest
-      setSortBy("distance")
+          setUserLocation(location)
+          const sorted = sortAgencies(agencies, "distance")
+          setFilteredAgencies(sorted)
+          setSortBy("distance")
+          setError("")
+        },
+        (err) => {
+          setError("Unable to access your location. Please use the search bar to find agencies by city name.")
+          setTimeout(() => setError(""), 5000)
+        }
+      )
     }
   }
 
-  const handleMarkerClick = (agency) => {
-    setSelectedAgency(agency)
-    setViewport({
-      ...viewport,
-      latitude: agency.location.coordinates.latitude,
-      longitude: agency.location.coordinates.longitude,
-      zoom: 14,
-    })
-  }
+  
+  // Sorting function
 
   return (
     <main className="pt-20 pb-20 bg-gradient-to-b from-blue-50/30 to-white">
@@ -270,26 +207,10 @@ export default function Agencies() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                  viewMode === "grid"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-gray-100 text-foreground/70 hover:bg-gray-200"
-                }`}
-              >
-                Grid View
-              </button>
-              <button
-                onClick={() => setViewMode("map")}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                  viewMode === "map"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-gray-100 text-foreground/70 hover:bg-gray-200"
-                }`}
-              >
-                Map View
-              </button>
+              <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg font-bold">
+                <LayoutGrid size={18} />
+                <span>Verified Listings Only</span>
+              </div>
             </div>
           </div>
         </div>
@@ -308,125 +229,8 @@ export default function Agencies() {
           </div>
         ) : (
           <>
-            {viewMode === "map" ? (
-              <div className="bg-white rounded-2xl overflow-hidden border border-border shadow-lg mb-8">
-                <div style={{ height: "600px", width: "100%" }}>
-                  {MAPBOX_TOKEN && MAPBOX_TOKEN !== "MAPBOX_API_KEY" ? (
-                    <ReactMapGL
-                      ref={mapRef}
-                      {...viewport}
-                      onMove={(evt) => setViewport(evt.viewState)}
-                      mapStyle="mapbox://styles/mapbox/streets-v12"
-                      mapboxAccessToken={MAPBOX_TOKEN}
-                    >
-                      <NavigationControl position="top-right" />
-                      <GeolocateControl
-                        position="top-right"
-                        trackUserLocation
-                        onGeolocate={(e) => {
-                          setUserLocation({
-                            latitude: e.coords.latitude,
-                            longitude: e.coords.longitude,
-                          })
-                        }}
-                      />
-
-                      {/* User Location Marker */}
-                      {userLocation && (
-                        <Marker
-                          latitude={userLocation.latitude}
-                          longitude={userLocation.longitude}
-                          anchor="bottom"
-                        >
-                          <div className="w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                            <div className="w-3 h-3 bg-white rounded-full"></div>
-                          </div>
-                        </Marker>
-                      )}
-
-                      {/* Agency Markers */}
-                      {filteredAgencies.map((agency) => {
-                        if (!agency.location?.coordinates) return null
-                        return (
-                          <Marker
-                            key={agency._id}
-                            latitude={agency.location.coordinates.latitude}
-                            longitude={agency.location.coordinates.longitude}
-                            anchor="bottom"
-                          >
-                            <button
-                              onClick={() => handleMarkerClick(agency)}
-                              className="transform hover:scale-110 transition-transform"
-                            >
-                              <MapPin className="text-primary fill-primary" size={36} />
-                            </button>
-                          </Marker>
-                        )
-                      })}
-
-                      {/* Popup for selected agency */}
-                      {selectedAgency && selectedAgency.location?.coordinates && (
-                        <Popup
-                          latitude={selectedAgency.location.coordinates.latitude}
-                          longitude={selectedAgency.location.coordinates.longitude}
-                          onClose={() => setSelectedAgency(null)}
-                          closeButton={true}
-                          closeOnClick={false}
-                          offsetTop={-10}
-                        >
-                          <div className="p-2">
-                            <h3 className="font-bold text-foreground mb-1">{selectedAgency.name}</h3>
-                            <div className="flex items-center gap-1 mb-2">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  size={12}
-                                  className={
-                                    i < Math.round(selectedAgency.rating || 0)
-                                      ? "fill-yellow-400 text-yellow-400"
-                                      : "text-gray-300"
-                                  }
-                                />
-                              ))}
-                              <span className="text-xs text-foreground/70 ml-1">
-                                ({selectedAgency.rating || "N/A"})
-                              </span>
-                            </div>
-                            <p className="text-xs text-foreground/70 mb-2">
-                              {selectedAgency.location?.address || "Location not specified"}
-                            </p>
-                            <button className="w-full px-3 py-1.5 bg-primary text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">
-                              View Details
-                            </button>
-                          </div>
-                        </Popup>
-                      )}
-                    </ReactMapGL>
-                  ) : (
-                    <div className="h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
-                      <div className="text-center p-8">
-                        <div className="text-6xl mb-4">🗺️</div>
-                        <h3 className="text-xl font-bold text-foreground mb-2">Map View Unavailable</h3>
-                        <p className="text-foreground/70 mb-4">
-                          Please add your Mapbox API key to enable interactive maps.
-                        </p>
-                        <p className="text-sm text-foreground/60">
-                          Get your free API key at{" "}
-                          <a
-                            href="https://account.mapbox.com/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline"
-                          >
-                            mapbox.com
-                          </a>
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : null}
+            {/* Grid View Only */}
+            <div className="mt-8"></div>
 
             {/* Grid View */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -498,21 +302,8 @@ export default function Agencies() {
                         {agency.description || "Professional travel services for all your journey needs."}
                       </p>
                       <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedAgency(agency)
-                            setViewMode("map")
-                            if (agency.location?.coordinates) {
-                              setViewport({
-                                latitude: agency.location.coordinates.latitude,
-                                longitude: agency.location.coordinates.longitude,
-                                zoom: 14,
-                              })
-                            }
-                          }}
-                          className="flex-1 px-4 py-2.5 border-2 border-primary text-primary font-medium rounded-xl hover:bg-primary/5 transition-all"
-                        >
-                          View on Map
+                         <button className="flex-1 px-4 py-2.5 bg-primary/10 text-primary font-bold rounded-xl border border-primary/20">
+                          Available
                         </button>
                         <button className="flex-1 px-4 py-2.5 gradient-primary text-white font-medium rounded-xl hover:shadow-lg transition-all">
                           Contact

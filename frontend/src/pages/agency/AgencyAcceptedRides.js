@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { MapPin, Clock, Users, CheckCircle } from "lucide-react"
-import axios from "axios"
-import { API_URL } from "../../services/api"
+import api from "../../services/api"
 
 export default function AgencyAcceptedRides() {
   const [rides, setRides] = useState([])
@@ -13,10 +12,7 @@ export default function AgencyAcceptedRides() {
 
   const fetchRides = async () => {
     try {
-      const token = localStorage.getItem("token")
-      const response = await axios.get(`${API_URL}/bookings/agency/accepted`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const response = await api.get(`/bookings/agency/accepted`)
       setRides(response.data.data)
     } catch (error) {
       console.error("Error fetching rides:", error)
@@ -28,10 +24,7 @@ export default function AgencyAcceptedRides() {
   const handleComplete = async (id) => {
     if (window.confirm("Mark this ride as completed?")) {
       try {
-        const token = localStorage.getItem("token")
-        await axios.patch(`${API_URL}/bookings/${id}/complete`, {}, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        await api.patch(`/bookings/${id}/complete`, {})
         fetchRides()
       } catch (error) {
         console.error("Error completing ride:", error)
@@ -68,8 +61,17 @@ export default function AgencyAcceptedRides() {
                       {ride.status}
                     </span>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex flex-col items-end gap-1">
                     <p className="text-2xl font-bold text-primary">₹{ride.finalPrice}</p>
+                    {ride.paymentStatus === "paid" ? (
+                      <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold border border-green-200">
+                        PAID
+                      </span>
+                    ) : (
+                      <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] font-bold border border-amber-200">
+                        UNPAID
+                      </span>
+                    )}
                   </div>
                 </div>
                 

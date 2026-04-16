@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { MapPin, Search, Star, Phone, Car, AlertCircle, Loader } from "lucide-react"
 import { agencyService } from "../services/api"
 import { useNavigate } from "react-router-dom"
+import LocationAutocomplete from "../components/LocationAutocomplete"
 
 export default function AgenciesNearYou() {
   const [searchLocation, setSearchLocation] = useState("")
@@ -71,31 +72,30 @@ export default function AgenciesNearYou() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Search Bar */}
         <div className="bg-white rounded-2xl border border-border shadow-lg p-6 mb-8">
-          <div className="flex gap-3">
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40" size={20} />
-              <input
-                type="text"
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="flex-1">
+              <LocationAutocomplete
+                name="searchLocation"
                 value={searchLocation}
                 onChange={(e) => setSearchLocation(e.target.value)}
-                placeholder="Enter your location"
-                className="w-full pl-12 pr-4 py-3 border border-border rounded-xl bg-background text-foreground placeholder-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                placeholder="Enter city or location to find agencies"
+                icon={Search}
               />
             </div>
             <button
               onClick={getCurrentLocation}
               disabled={loading}
-              className="px-6 py-3 bg-primary/10 border border-primary text-primary font-medium rounded-xl hover:bg-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-3 bg-primary/10 border border-primary text-primary font-medium rounded-xl hover:bg-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <MapPin size={20} />
-              Current Location
+              GPS
             </button>
             <button 
               onClick={fetchAllAgencies}
               disabled={loading}
               className="px-8 py-3 bg-primary text-white font-medium rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {loading ? "Loading..." : "Search"}
+              {loading ? "Loading..." : "Find Agencies"}
             </button>
           </div>
         </div>

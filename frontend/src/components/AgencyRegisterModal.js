@@ -86,9 +86,27 @@ export default function AgencyRegisterModal({ isOpen, onClose, onSwitchToLogin }
           }
         },
         (error) => {
-          setError("Unable to get your location. Please enable location services or enter manually.")
-          console.error(error)
-          setGettingLocation(false)
+          console.warn("Browser geolocation failed, falling back to IP based location...", error)
+          // Fallback to IP based location
+          axios.get('https://ipapi.co/json/')
+            .then(res => {
+              const { latitude, longitude, city, region, country_name } = res.data;
+              const address = `${city}, ${region}, ${country_name}`;
+              setFormData((prev) => ({
+                ...prev,
+                location: {
+                  latitude,
+                  longitude,
+                  address,
+                },
+              }))
+            })
+            .catch(err => {
+              setError("Unable to get your location automatically. Please enter your address manually.")
+            })
+            .finally(() => {
+              setGettingLocation(false)
+            })
         }
       )
     } else {

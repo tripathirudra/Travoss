@@ -223,5 +223,19 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* ===== Car Animation ===== */
+  .animate-drive-car {
+    animation: driveCar 12s linear infinite;
+  }
+  
+  @keyframes driveCar {
+    0% {
+      transform: translateX(-10vw);
+    }
+    100% {
+      transform: translateX(110vw);
+    }
+  }
 }
 
