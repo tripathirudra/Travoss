@@ -2,11 +2,15 @@ const multer = require("multer")
 const path = require("path")
 const fs = require("fs")
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, "../uploads")
+// Ensure uploads directory exists (use /tmp for Vercel production deployment)
+const tmpDir = require("os").tmpdir()
+const uploadsDir = process.env.NODE_ENV === "production" 
+  ? path.join(tmpDir, "uploads")
+  : path.join(__dirname, "../uploads")
+
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true })
-  console.log("Created uploads directory")
+  console.log("Created uploads directory at " + uploadsDir)
 }
 
 // Configure storage

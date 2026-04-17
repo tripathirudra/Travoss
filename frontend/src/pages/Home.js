@@ -13,71 +13,26 @@ export default function Home() {
 
   return (
     <main className="pt-20">
-      {/* Hero Section with Premium Gradient */}
-      <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden bg-background dark:bg-gray-900">
-        {/* Premium Layered Gradients & Pattern */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50 via-background to-indigo-50 dark:from-blue-900/20 dark:via-gray-900 dark:to-indigo-900/20"></div>
-          <div 
-            className="absolute inset-0 opacity-50 dark:opacity-30"
-            style={{
-              backgroundImage: 'radial-gradient(circle at 25% 25%, hsla(220, 85%, 55%, 0.1) 0%, transparent 50%)',
-            }}
-          />
-        </div>
+      {/* Hero Section */}
+      <section className="hero-container">
+          {/* The Video Background */}
+          <video autoPlay muted loop playsInline poster="/assets/video-thumbnail.jpg" className="hero-video">
+              <source src="/assets/travoss-promo.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+          </video>
 
-        {/* Parallax Background Image */}
-        <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.4}px)` }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 via-transparent to-purple-500/5" />
-          <img
-            src="/assets/india-travel-destinations.jpg"
-            alt="Travel destination"
-            className="w-full h-full object-cover opacity-10 dark:opacity-5"
-          />
-        </div>
+          {/* Dark Overlay to make text readable */}
+          <div className="hero-overlay"></div>
 
-        {/* Animated Running Car Background */}
-        <div className="absolute inset-x-0 bottom-20 z-0 pointer-events-none opacity-40 dark:opacity-20 overflow-hidden">
-          <div className="animate-drive-car text-6xl drop-shadow-xl inline-block">
-            🚗
-            <div className="w-16 h-1 bg-black/20 mt-1 blur-sm rounded-full absolute bottom-1 right-1"></div>
+          {/* Hero Content */}
+          <div className="hero-content">
+              <h1 className="hero-title">Empowering Travel Businesses.</h1>
+              <p className="hero-subtitle">India’s smartest B2B travel platform connecting agencies through AI and collaboration.</p>
+              <div className="hero-btns">
+                  <Link to="/agencies" className="btn-primary">Join Travoss Today</Link>
+                  <Link to="/services" className="btn-secondary">Watch Demo</Link>
+              </div>
           </div>
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-5xl">
-          {/* Main Heading with Smooth Fade Animation */}
-          <h1 className="animate-hero-title text-5xl md:text-8xl font-black text-foreground mb-6 text-balance leading-tight tracking-tighter dark:text-white">
-            Discover Your Next
-            <span className="block gradient-text mt-2">Adventure</span>
-          </h1>
-
-          {/* Subtitle with Delayed Animation */}
-          <p className="animate-hero-subtitle text-lg md:text-xl text-foreground/70 mb-12 text-balance max-w-3xl mx-auto leading-relaxed dark:text-gray-300">
-            Connect with 500+ verified travel agencies across India and plan unforgettable journeys with confidence and ease.
-          </p>
-
-          {/* Buttons with Staggered Animation */}
-          <div className="animate-hero-buttons flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link
-              to="/agencies"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-xl btn-lift shadow-soft hover:shadow-soft-lg transition-all duration-300 group relative overflow-hidden text-lg"
-            >
-              {/* Shimmer effect */}
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-              <span className="relative flex items-center gap-2">
-                Explore Agencies
-                <ArrowRight size={22} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-              </span>
-            </Link>
-            <Link
-              to="/services"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 border-2 border-blue-500 font-bold rounded-xl hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 shadow-soft group text-lg dark:bg-gray-800 dark:text-white dark:border-blue-400 dark:hover:bg-gray-700"
-            >
-              View Services
-            </Link>
-          </div>
-        </div>
       </section>
 
       {/* Premium CTA Gradient Section */}
